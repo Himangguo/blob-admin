@@ -6,10 +6,11 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Motion, spring } from "react-motion";
 // 导入styled
 import { LoginWrapper } from "./style";
-export default memo(function Login() {
+export default memo(function Login(props) {
   const [titlePosition, setTitlePosition] = useState(300);
   useEffect(() => {
     setTitlePosition(0);
+    console.log(props);
   }, []);
   function onFinish(values) {
     console.log("Received values of form: ", values);

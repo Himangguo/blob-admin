@@ -6,7 +6,6 @@ export const PlatFormWrapper = styled.div`
 
   .center {
     display: flex;
-    padding-top: 40px;
   }
 `;
 export const Header = styled.div`
@@ -83,10 +82,16 @@ export const Header = styled.div`
   }
 `;
 export const LeftMenu = styled.div`
-  width: 200px;
-  height: calc(100vh - 80px);
-  border-right: 1px solid #000;
+  height: calc(100vh - 64px);
+  overflow-y:scroll;
+  border-right: 1px solid #f0f0f0;
+  background: #001529;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 `;
 export const CenterPage = styled.div`
   flex: 1;
+  padding: 40px;
 `;
