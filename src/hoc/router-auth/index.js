@@ -1,18 +1,20 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
+import { testTokenAuth } from "@/api/user";
+
 export default memo(function RouterAuth(props) {
   const { location, config } = props;
   let { pathname } = location;
-  const isLogin = localStorage.getItem("token");
-  function getSuperRouter(config, pathname) {
+  // 获取pathname的路由对象或者父级路由对象
+  const getSuperRouter = useCallback((config, pathname) => {
     let superRoute = null;
     for (let i = 0; i < config.length; i++) {
       if (pathname === config[i].path) {
-          // 如果找到了对应的路由对象直接返回
+        // 如果找到了对应的路由对象直接返回
         return config[i];
       }
       if (pathname.indexOf(config[i].path + "/") === 0) {
-          // 如果此路由对象是pathname的父级
+        // 如果此路由对象是pathname的父级
         if (!superRoute) {
           superRoute = config[i];
         } else {
@@ -24,53 +26,65 @@ export default memo(function RouterAuth(props) {
       }
     }
     return superRoute;
-  }
-  let targetRouterConfig = getSuperRouter(config, pathname);
-
-  if (isLogin) {
-    // 登陆状态下，路由合法，跳转到该页面
-    if (targetRouterConfig) {
-      return (
-        <Route
-          path={pathname}
-          render={
-            targetRouterConfig.render
-              ? targetRouterConfig.render
-              : (props) =>
-                  React.createElement(targetRouterConfig.component, {
-                    ...props,
-                    route: targetRouterConfig,
-                  })
+  }, []);
+  const targetRouterConfig = useMemo(() => getSuperRouter(config, pathname), [
+    getSuperRouter,
+    config,
+    pathname,
+  ]);
+  const [renderRoutes, setRenderRoutes] = useState(null);
+  useEffect(() => {
+    async function render() {
+      if (targetRouterConfig) {
+        // 如果路由合法
+        if (targetRouterConfig.auth) {
+          // 如果需要登陆态
+          let { id } = await testTokenAuth();
+          if (id) {
+            // 登陆态合法
+            setRenderRoutes(
+              <Route
+                path={pathname}
+                render={
+                  targetRouterConfig.render
+                    ? targetRouterConfig.render
+                    : (props) =>
+                        React.createElement(targetRouterConfig.component, {
+                          ...props,
+                          route: targetRouterConfig,
+                        })
+                }
+                exact={targetRouterConfig.exact}
+              />
+            );
+          } else {
+            // 登陆态不合法就跳到登录页
+            setRenderRoutes(<Redirect to="/login" />);
           }
-          exact={targetRouterConfig.exact}
-        />
-      );
-    } else {
-      // 如果路由不合法，重定向到 404页面
-      return <Redirect to="/404" />;
+        } else {
+          // 如果不要登录态
+          setRenderRoutes(
+            <Route
+              path={pathname}
+              render={
+                targetRouterConfig.render
+                  ? targetRouterConfig.render
+                  : (props) =>
+                      React.createElement(targetRouterConfig.component, {
+                        ...props,
+                        route: targetRouterConfig,
+                      })
+              }
+              exact={targetRouterConfig.exact}
+            />
+          );
+        }
+      } else {
+        // 如果路由不合法，重定向到 404页面
+        setRenderRoutes(<Redirect to="/404" />);
+      }
     }
-  } else {
-    // 非登陆状态下，路由合法，不需要校验权限的页面，直接跳转到该页面
-    if (targetRouterConfig && !targetRouterConfig.auth) {
-      return (
-        <Route
-          path={pathname}
-          render={
-            targetRouterConfig.render
-              ? targetRouterConfig.render
-              : () => React.createElement(targetRouterConfig.component)
-          }
-          exact={targetRouterConfig.exact}
-          route={targetRouterConfig}
-        />
-      );
-    }
-    // 非登陆状态下，路由合法，需要校验权限的页面重定向到登录页
-    else if (targetRouterConfig && targetRouterConfig.auth) {
-      return <Redirect to="/login" />;
-    } else {
-      // 非登陆状态下，路由不合法时，重定向至404页面
-      return <Redirect to="/404" />;
-    }
-  }
+    render();
+  }, [targetRouterConfig, pathname]);
+  return <>{renderRoutes && renderRoutes}</>;
 });

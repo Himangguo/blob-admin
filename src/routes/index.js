@@ -37,7 +37,6 @@ const routes = [
       {
         path: "/platform",
         component: PlatForm,
-        auth: true,
         exact: true,
         render: () => {
           return <Redirect to="/platform/home" />;
@@ -45,27 +44,22 @@ const routes = [
       },
       {
         path: "/platform/home",
-        auth: true,
         component: Home,
       },
       {
         path: "/platform/use",
-        auth: true,
         component: Use,
       },
       {
         path: "/platform/about",
-        auth: true,
         component: About,
       },
       {
         path: "/platform/privacy",
-        auth: true,
         component: Privacy,
       },
       {
         path: "/platform/article",
-        auth: true,
         exact: true,
         render: () => {
           return <Redirect to="/platform/article/blobList" />;
@@ -73,18 +67,15 @@ const routes = [
       },
       {
         path: "/platform/article/blobList",
-        auth: true,
         component: BlobList,
       },
       {
         path: "/platform/article/momentList",
-        auth: true,
         component: MomentList,
       },
 
       {
         path: "/platform/personality",
-        auth: true,
         exact: true,
         render: () => {
           return <Redirect to="/platform/personality/bgMusic" />;
@@ -92,12 +83,10 @@ const routes = [
       },
       {
         path: "/platform/personality/bgMusic",
-        auth: true,
         component: BgMusic,
       },
       {
         path: "/platform/personality/bgWall",
-        auth: true,
         component: BgWall,
       },
     ],

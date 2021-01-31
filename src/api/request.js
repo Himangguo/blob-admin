@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BASE_URL, TIME_OUT } from "./config";
+import { message } from "antd";
 const instance = axios.create({
   baseURL: BASE_URL,
   timeout: TIME_OUT,
@@ -7,6 +8,8 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
+    // 将token放入Headers的Authorization字段中
+    config.headers.Authorization = localStorage.getItem("token");
     return config;
   },
   (err) => {
@@ -19,9 +22,9 @@ instance.interceptors.response.use(
   },
   (err) => {
     if (err && err.response) {
-      console.log(err.response);
+      console.log(err.response.data);
+      message.error(err.response.data);
     }
-    return err;
   }
 );
 

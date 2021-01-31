@@ -10,12 +10,23 @@ import {
   ContainerOutlined,
   MailOutlined,
 } from "@ant-design/icons";
-import RouterAuth from "@/hoc/router-auth";
+// hooks
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
+import { changeUserInf } from "@/store/actionCreator";
+// import RouterAuth from "@/hoc/router-auth";
+import { renderRoutes } from "react-router-config";
 import { PlatFormWrapper, Header, LeftMenu, CenterPage } from "./style";
 import logo from "@/assets/img/platform/logo.png";
 export default memo(function PlatForm(props) {
   const [btnList] = useState(["使用", "关于博客苗"]);
   const [collapsed, setCollapsed] = useState(false);
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector(
+    (state) => ({
+      userInfo: state.userInfo,
+    }),
+    [shallowEqual]
+  );
   const selectedKeys = useMemo(() => props.location.pathname, [
     props.location.pathname,
   ]);
@@ -28,6 +39,11 @@ export default memo(function PlatForm(props) {
   }
   function toggleCollapsed() {
     setCollapsed(!collapsed);
+  }
+  function handleLogout() {
+    dispatch(changeUserInf(null));
+    localStorage.removeItem("token");
+    props.history.push("/login");
   }
   return (
     <PlatFormWrapper>
@@ -53,9 +69,11 @@ export default memo(function PlatForm(props) {
           ))}
         </div>
         <div className="userinfo">
-          <div className="account">用户名</div>
+          <div className="account">{userInfo && userInfo.name}</div>
           <div className="info">个人信息</div>
-          <div className="logout">退出</div>
+          <div className="logout" onClick={handleLogout}>
+            退出
+          </div>
         </div>
       </Header>
       <div className="center">
@@ -111,7 +129,8 @@ export default memo(function PlatForm(props) {
         </LeftMenu>
         <CenterPage>
           <Switch>
-            <RouterAuth config={props.route.routes} />
+            {/* <RouterAuth config={props.route.routes} /> */}
+            {renderRoutes(props.route.routes)}
           </Switch>
         </CenterPage>
       </div>

@@ -1,0 +1,1 @@
+export const CHANGE_USERINF = "change_userinf";
