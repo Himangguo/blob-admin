@@ -44,7 +44,7 @@ export default memo(function RouterAuth(props) {
             // 登陆态合法
             setRenderRoutes(
               <Route
-                path={pathname}
+                path={targetRouterConfig.path}
                 render={
                   targetRouterConfig.render
                     ? targetRouterConfig.render
@@ -65,7 +65,7 @@ export default memo(function RouterAuth(props) {
           // 如果不要登录态
           setRenderRoutes(
             <Route
-              path={pathname}
+              path={targetRouterConfig.path}
               render={
                 targetRouterConfig.render
                   ? targetRouterConfig.render

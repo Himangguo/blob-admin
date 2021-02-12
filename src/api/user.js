@@ -25,3 +25,20 @@ export const testTokenAuth = () => {
     url: "/test",
   });
 };
+
+// 获取个人信息
+export const getUserDetailInfo = ()=>{
+  return request({
+    method:'get',
+    url:"/user/getInfo",
+  });
+}
+
+// 修改个人信息
+export const updateUserInfo = (userid,data)=>{
+  return request({
+    method:'patch',
+    url:'/user/'+userid,
+    data
+  })
+}

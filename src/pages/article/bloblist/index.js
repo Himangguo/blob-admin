@@ -1,9 +1,9 @@
-import React, { memo } from 'react'
-
-export default memo(function BlobList() {
-    return (
-        <div>
-            博客列表
-        </div>
-    )
-})
+import React, { memo, useEffect } from "react";
+import PageHeader from "@/components/page-header";
+export default memo(function BlobList(props) {
+  return (
+    <div>
+      <PageHeader title={props.route.name} />
+    </div>
+  );
+});

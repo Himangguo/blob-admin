@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { Switch } from "react-router-dom";
 import { Divider, Input, Menu, Button } from "antd";
 import {
@@ -13,8 +13,10 @@ import {
 // hooks
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import { changeUserInf } from "@/store/actionCreator";
-// import RouterAuth from "@/hoc/router-auth";
-import { renderRoutes } from "react-router-config";
+import RouterAuth from "@/hoc/router-auth";
+// import { renderRoutes } from "react-router-config";
+// api
+import { testTokenAuth } from "@/api/user";
 import { PlatFormWrapper, Header, LeftMenu, CenterPage } from "./style";
 import logo from "@/assets/img/platform/logo.png";
 export default memo(function PlatForm(props) {
@@ -27,6 +29,14 @@ export default memo(function PlatForm(props) {
     }),
     [shallowEqual]
   );
+  useEffect(() => {
+    testTokenAuth().then((res) => {
+      if (res.id) {
+        // 如果校验通过
+        dispatch(changeUserInf(res));
+      }
+    });
+  },[]);
   const selectedKeys = useMemo(() => props.location.pathname, [
     props.location.pathname,
   ]);
@@ -113,7 +123,7 @@ export default memo(function PlatForm(props) {
               title="文章管理"
             >
               <Menu.Item key="/platform/article/blobList">博客列表</Menu.Item>
-              <Menu.Item key="/platform/article/momentList">动态列表</Menu.Item>
+              <Menu.Item key="/platform/article/add">新增文章</Menu.Item>
             </Menu.SubMenu>
             <Menu.SubMenu
               key="/platform/personality"
@@ -129,8 +139,8 @@ export default memo(function PlatForm(props) {
         </LeftMenu>
         <CenterPage>
           <Switch>
-            {/* <RouterAuth config={props.route.routes} /> */}
-            {renderRoutes(props.route.routes)}
+            <RouterAuth config={props.route.routes} />
+            {/* {renderRoutes(props.route.routes)} */}
           </Switch>
         </CenterPage>
       </div>
