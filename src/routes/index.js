@@ -8,6 +8,7 @@ import Use from "@/pages/use";
 import About from "@/pages/about";
 import Privacy from "@/pages/privacy";
 import BlobList from "@/pages/article/bloblist";
+import BlobDetail from "@/pages/article/detail";
 import AddArticle from "@/pages/article/add-article";
 import BgMusic from "@/pages/personality/bgmusic";
 import BgWall from "@/pages/personality/bgwall";
@@ -73,6 +74,11 @@ const routes = [
         path: "/platform/article/blobList",
         name:'博客列表',
         component: BlobList,
+      },
+      { 
+        path: "/platform/article/detail/:id",
+        name:'详情',
+        component: BlobDetail,
       },
       {
         path: "/platform/article/add",
