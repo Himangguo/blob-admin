@@ -14,7 +14,8 @@ import { createLabel } from "@/api/label";
 
 export default memo(function AddArticle(props) {
   const [title, setTitle] = useState("");
-  const [mdHtml, setMdHtml] = useState("");
+  // const [mdHtml, setMdHtml] = useState("");
+  const [md,setMd] = useState("");
   const [chooseLabels, setChooseLabels] = useState([]);
   const [inputVisible, setInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -56,16 +57,17 @@ export default memo(function AddArticle(props) {
       /*    if (this.hasChange) {
         this.hasChange = true;
       } */
-      const html = simplemde.markdown(simplemde.value());
-      setMdHtml(html);
+      console.log(simplemde.value())
+      // const html = simplemde.markdown(simplemde.value());
+      setMd(simplemde.value());
     });
   }, [SimpleMDE]);
   const handleTitleChange = useCallback((e) => {
     setTitle(e.target.value);
   });
   const handleArticleSubmit = useCallback(() => {
-    console.log(title, mdHtml);
-    _createArticle(title, mdHtml);
+    console.log(title, md);
+    _createArticle(title, md);
   }, [_createArticle]);
   const handleEditInputChange = (e) => {
     setEditInputValue(e.target.value);

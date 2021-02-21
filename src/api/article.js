@@ -25,10 +25,14 @@ export const relaMomentToLabel = (momentId, ids) => {
 };
 
 // 获取文章列表
-export const getArticleList = () => {
+export const getArticleList = (offset, size) => {
   return request({
     method: "get",
     url: baseURL + "/getList",
+    params: {
+      offset,
+      size,
+    },
   });
 };
 
@@ -37,5 +41,16 @@ export const delArticleById = (id) => {
   return request({
     method: "delete",
     url: `${baseURL}/${id}/delete`,
+  });
+};
+
+// 获取文章详情
+export const getrticleDetailById = (id) => {
+  return request({
+    method: "get",
+    url: `${baseURL}/detail`,
+    params: {
+      id,
+    },
   });
 };

@@ -7,13 +7,27 @@ import { getArticleList, delArticleById } from "@/api/article";
 export default memo(function BlobList(props) {
   const { Column } = Table;
   const [data, setData] = useState([]);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+    onChange: (page, pageSize) => {
+      console.log(pagination);
+      _getArticleList(page, pageSize);
+    },
+  });
+
   useEffect(() => {
-    _getArticleList();
+    _getArticleList(1, pagination.pageSize);
   }, []);
-  function _getArticleList() {
-    getArticleList().then((res) => {
+  function _getArticleList(page, pageSize) {
+    console.log(page, pageSize);
+    getArticleList((page - 1) * pageSize, pageSize).then((res) => {
       console.log("getArticleList", res);
-      setData(res);
+      if (res.length > 0) {
+        setData(res);
+        setPagination({ ...pagination, current: page, total: res[0].total });
+      }
     });
   }
   function handleArticleDel(record) {
@@ -32,7 +46,7 @@ export default memo(function BlobList(props) {
   return (
     <BlobListWrapper>
       <PageHeader title={props.route.name} />
-      <Table dataSource={data}>
+      <Table dataSource={data} pagination={pagination}>
         <Column title="文章标题" dataIndex="title" key="title" />
         <Column
           title="文章内容"

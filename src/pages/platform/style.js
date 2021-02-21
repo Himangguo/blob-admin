@@ -94,4 +94,6 @@ export const LeftMenu = styled.div`
 export const CenterPage = styled.div`
   flex: 1;
   padding: 40px;
+  height: calc(100vh - 64px);
+  overflow:scroll;
 `;
