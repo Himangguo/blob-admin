@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
 import { Switch } from "react-router-dom";
+import { renderRoutes } from "react-router-config";
 import { Divider, Input, Menu, Button } from "antd";
 import {
   AppstoreOutlined,
@@ -14,7 +15,6 @@ import {
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import { changeUserInf } from "@/store/actionCreator";
 import RouterAuth from "@/hoc/router-auth";
-// import { renderRoutes } from "react-router-config";
 // api
 import { testTokenAuth } from "@/api/user";
 import { PlatFormWrapper, Header, LeftMenu, CenterPage } from "./style";
@@ -139,8 +139,8 @@ export default memo(function PlatForm(props) {
         </LeftMenu>
         <CenterPage>
           <Switch>
-            <RouterAuth config={props.route.routes} />
-            {/* {renderRoutes(props.route.routes)} */}
+            {/* <RouterAuth config={props.route.routes} /> */}
+            {renderRoutes(props.route.routes)}
           </Switch>
         </CenterPage>
       </div>

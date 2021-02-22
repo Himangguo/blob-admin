@@ -1,19 +1,19 @@
-import React, { memo } from "react";
+import React, { memo, Suspense } from "react";
 import { Provider } from "react-redux";
 import store from "@/store";
 import routes from "@/routes";
-import { BrowserRouter, Switch } from "react-router-dom";
+import { BrowserRouter} from "react-router-dom";
 
 import RouterAuth from "@/hoc/router-auth";
-// import { renderRoutes } from "react-router-config";
+import { renderRoutes } from "react-router-config";
 export default memo(function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
-        <Switch>
-          <RouterAuth config={routes} />
-          {/* {renderRoutes(routes)} */}
-        </Switch>
+        <Suspense fallback={<div>page loading</div>}>
+          {/* <RouterAuth config={routes} /> */}
+          {renderRoutes(routes)}
+        </Suspense>
       </BrowserRouter>
     </Provider>
   );

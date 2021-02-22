@@ -1,7 +1,7 @@
-import React from "react";
+import React,{lazy} from "react";
 import { Redirect } from "react-router-dom";
 
-import Login from "@/pages/login";
+/* import Login from "@/pages/login";
 import PlatForm from "@/pages/platform";
 import Home from "@/pages/home";
 import Use from "@/pages/use";
@@ -13,7 +13,19 @@ import AddArticle from "@/pages/article/add-article";
 import BgMusic from "@/pages/personality/bgmusic";
 import BgWall from "@/pages/personality/bgwall";
 
-import NotFound from "@/pages/not-found";
+import NotFound from "@/pages/not-found"; */
+const Login = lazy(()=>import("@/pages/login"));
+const PlatForm = lazy(()=>import("@/pages/platform"));
+const Home = lazy(()=>import("@/pages/home"));
+const Use = lazy(()=>import("@/pages/use"));
+const About = lazy(()=>import("@/pages/about"));
+const Privacy = lazy(()=>import("@/pages/privacy"));
+const BlobList = lazy(()=>import("@/pages/article/bloblist"));
+const BlobDetail = lazy(()=>import("@/pages/article/detail"));
+const AddArticle = lazy(()=>import("@/pages/article/add-article"));
+const BgMusic = lazy(()=>import("@/pages/personality/bgmusic"));
+const BgWall = lazy(()=>import("@/pages/personality/bgwall"));
+const NotFound = lazy(()=>import("@/pages/not-found"));
 const routes = [
   {
     path: "/",
