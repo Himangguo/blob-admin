@@ -1,10 +1,11 @@
 import React, { memo, useEffect, useState } from "react";
-import { Form, Input, InputNumber, Button, message } from "antd";
+import { Form, Input, InputNumber, Button, message, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 // api
-import { getUserDetailInfo } from "@/api/user";
+import { getUserDetailInfo, getAvatarUrl } from "@/api/user";
 import { FormWrapper } from "./style";
-import { updateUserInfo } from "../../api/user";
+import { updateUserInfo, uploadAvatarAction } from "../../api/user";
 import { shallowEqual, useSelector } from "react-redux";
 export default memo(function Home() {
   const { userInfo } = useSelector(
@@ -21,6 +22,7 @@ export default memo(function Home() {
     websiteName: "",
     qq: "",
     github: "",
+    avatarUrl: "",
   });
   const layout = {
     labelCol: {
@@ -45,6 +47,32 @@ export default memo(function Home() {
       [name]: value,
     });
   }
+  // 上传头像组件
+  const Uploader = () => {
+    const props = {
+      name: "avatar",
+      action: uploadAvatarAction(),
+      listType: "picture",
+      maxCount: 1,
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      beforeUpload: (file) => {
+        if (file.type !== "image/png" && file.type !== "image/jpeg") {
+          message.error(`${file.name} 不是png或者jpeg`);
+        }
+        return file.type === "image/png" ? true : Upload.LIST_IGNORE;
+      },
+      onChange: (info) => {
+        console.log(info.fileList);
+      },
+    };
+    return (
+      <Upload {...props}>
+        <Button icon={<UploadOutlined />}>上传头像</Button>
+      </Upload>
+    );
+  };
   function handleFormSubmit() {
     console.log(user, userInfo.id);
     updateUserInfo(userInfo.id, user).then((res) => {
@@ -115,6 +143,12 @@ export default memo(function Home() {
               handleItemChange(e.target.value, "github");
             }}
           />
+        </Form.Item>
+        <Form.Item name="upload" label="头像" valuePropName="filelist">
+          <div className="avatar-box">
+            {user.avatarUrl && <img src={`${user.avatarUrl}?t=${new Date().getTime()}`} alt="" />}
+            <Uploader />
+          </div>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type="primary" onClick={handleFormSubmit}>

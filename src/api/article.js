@@ -1,14 +1,16 @@
 import request from "./request";
+import { BASE_URL } from "./config";
 const baseURL = "/moment";
 
 // 发布文章
-export const createArticle = (title, content) => {
+export const createArticle = (title, content, fileList) => {
   return request({
     method: "post",
     url: baseURL + "/create",
     data: {
       title,
       content,
+      fileList,
     },
   });
 };
@@ -54,3 +56,20 @@ export const getrticleDetailById = (id) => {
     },
   });
 };
+
+// 上传图片
+export const uploadPicAction = () => {
+  return `${BASE_URL}/upload/picture`;
+};
+
+// 上传文件
+/* export const uploadPic = (formdata)=>{
+  return request({
+    method:'post',
+    url:"/upload/picture",
+    headers:{
+      "Content-Type":"multipart/form-data"
+    },
+    data:formdata,
+  })
+} */

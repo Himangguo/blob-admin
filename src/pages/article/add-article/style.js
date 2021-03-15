@@ -10,4 +10,7 @@ export const AddArticleWrapper = styled.div`
     border-left: 1px solid #bbb;
     border-right: 1px solid #bbb;
   }
+  .article-pic {
+    width: 100%;
+  }
 `;

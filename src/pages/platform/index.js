@@ -32,11 +32,12 @@ export default memo(function PlatForm(props) {
   useEffect(() => {
     testTokenAuth().then((res) => {
       if (res.id) {
+        console.log('res',res);
         // 如果校验通过
         dispatch(changeUserInf(res));
       }
     });
-  },[]);
+  }, []);
   const selectedKeys = useMemo(() => props.location.pathname, [
     props.location.pathname,
   ]);

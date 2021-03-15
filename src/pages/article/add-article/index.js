@@ -4,7 +4,7 @@ import DOMPurify from "dompurify";
 import { Input, Button, message, Tag, Tooltip } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import PageHeader from "@/components/page-header";
-
+import PicUpload from "@/components/pic-upload";
 import "simplemde/dist/simplemde.min.css";
 // import ' /css/font-awesome.min.css';
 import { AddArticleWrapper } from "./style";
@@ -14,8 +14,9 @@ import { createLabel } from "@/api/label";
 
 export default memo(function AddArticle(props) {
   const [title, setTitle] = useState("");
+  const [fileList, setFileList] = useState([]);
   // const [mdHtml, setMdHtml] = useState("");
-  const [md,setMd] = useState("");
+  const [md, setMd] = useState("");
   const [chooseLabels, setChooseLabels] = useState([]);
   const [inputVisible, setInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -57,7 +58,7 @@ export default memo(function AddArticle(props) {
       /*    if (this.hasChange) {
         this.hasChange = true;
       } */
-      console.log(simplemde.value())
+      console.log(simplemde.value());
       // const html = simplemde.markdown(simplemde.value());
       setMd(simplemde.value());
     });
@@ -65,9 +66,17 @@ export default memo(function AddArticle(props) {
   const handleTitleChange = useCallback((e) => {
     setTitle(e.target.value);
   });
+  const handleImgListChange = useCallback((files) => {
+    console.log("收到啦", files);
+    setFileList(files);
+  });
   const handleArticleSubmit = useCallback(() => {
-    console.log(title, md);
-    _createArticle(title, md);
+    console.log(title, md, fileList);
+    if (title !== "" && md !== "") {
+      _createArticle(title, md,fileList);
+    }else {
+      message.info("文章标题和正文不能为空奥");
+    }
   }, [_createArticle]);
   const handleEditInputChange = (e) => {
     setEditInputValue(e.target.value);
@@ -103,11 +112,11 @@ export default memo(function AddArticle(props) {
     setInputVisible(false);
     setInputValue("");
   };
-  function _createArticle(title, content) {
-    createArticle(title, content).then((res) => {
+  function _createArticle(title, content,fileList) {
+    createArticle(title, content,fileList).then((res) => {
       console.log(res);
-      if (res.insertId) {
-        const articleId = res.insertId; // 文章id
+      if (res.data) {
+        const articleId = res.data; // 文章id
         console.log(chooseLabels);
         // 创建标签
         createLabel({ labels: chooseLabels }).then((res) => {
@@ -137,6 +146,9 @@ export default memo(function AddArticle(props) {
         />
       </div>
       <textarea id="md-editor" defaultValue="" />
+      <div className="article-pic">
+        <PicUpload handleImgListChange={(list) => handleImgListChange(list)} />
+      </div>
       {chooseLabels.map((tag, index) => {
         if (editInputIndex === index) {
           return (

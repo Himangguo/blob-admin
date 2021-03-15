@@ -24,9 +24,9 @@ export default memo(function BlobList(props) {
     console.log(page, pageSize);
     getArticleList((page - 1) * pageSize, pageSize).then((res) => {
       console.log("getArticleList", res);
-      if (res.length > 0) {
-        setData(res);
-        setPagination({ ...pagination, current: page, total: res[0].total });
+      if (res?.list?.length > 0) {
+        setData(res.list);
+        setPagination({ ...pagination, current: page, total: res.total });
       }
     });
   }

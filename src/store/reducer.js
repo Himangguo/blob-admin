@@ -5,7 +5,7 @@ const initialState = {
 function reducer(state = initialState, action) {
   switch (action.type) {
     case CHANGE_USERINF:
-      return { ...state, userInfo: action.inf };
+      return { ...state, userInfo: action.userInfo };
     default:
       return state;
   }
