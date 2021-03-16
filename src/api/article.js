@@ -38,6 +38,16 @@ export const getArticleList = (offset, size) => {
   });
 };
 
+// 获取评论列表
+export const getCommentList = (momentId) => {
+  return request({
+    method: "get",
+    url: "/comment",
+    params: {
+      momentId,
+    },
+  });
+};
 // 删除文章
 export const delArticleById = (id) => {
   return request({
@@ -62,14 +72,13 @@ export const uploadPicAction = () => {
   return `${BASE_URL}/upload/picture`;
 };
 
-// 上传文件
-/* export const uploadPic = (formdata)=>{
+// 文章有效性修改
+export const validChange = (commentId, valid) => {
   return request({
-    method:'post',
-    url:"/upload/picture",
-    headers:{
-      "Content-Type":"multipart/form-data"
+    method: "patch",
+    url: `${baseURL}/${commentId}/valid`,
+    data: {
+      valid,
     },
-    data:formdata,
-  })
-} */
+  });
+};

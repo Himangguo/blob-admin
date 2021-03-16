@@ -1,9 +1,9 @@
 import React, { memo, useEffect, useState } from "react";
 import moment from "moment";
 import PageHeader from "@/components/page-header";
-import { Table, Tag, Space, Popconfirm, message } from "antd";
+import { Table, Tag, Space, Popconfirm, message, Badge } from "antd";
 import { BlobListWrapper } from "./style";
-import { getArticleList, delArticleById } from "@/api/article";
+import { getArticleList, delArticleById, validChange } from "@/api/article";
 export default memo(function BlobList(props) {
   const { Column } = Table;
   const [data, setData] = useState([]);
@@ -30,11 +30,25 @@ export default memo(function BlobList(props) {
       }
     });
   }
+  function hideArticle(id) {
+    validChange(id, 0).then((res) => {
+      console.log("validChange", res);
+      message.success("已隐藏该文章");
+      _getArticleList(pagination.current,pagination.pageSize);
+    });
+  }
+  function openArticle(id) {
+    validChange(id, 1).then((res) => {
+      console.log("validChange", res);
+      message.success("已公开该文章");
+      _getArticleList(pagination.current,pagination.pageSize);
+    });
+  }
   function handleArticleDel(record) {
     console.log(record);
     delArticleById(record.id).then((res) => {
       console.log("delArticleById", res);
-      _getArticleList();
+      _getArticleList(pagination.current,pagination.pageSize);
       message.success("删除成功");
     });
   }
@@ -80,6 +94,28 @@ export default memo(function BlobList(props) {
           )}
         />
         <Column
+          title="隐私"
+          dataIndex="valid"
+          key="valid"
+          render={(valid) => (
+            <>
+              {valid ? (
+                <div>
+                  {" "}
+                  <Badge status="success" />
+                  已公开
+                </div>
+              ) : (
+                <div>
+                  {" "}
+                  <Badge status="error" />
+                  已隐藏
+                </div>
+              )}
+            </>
+          )}
+        />
+        <Column
           title="操作"
           key="action"
           render={(text, record) => (
@@ -91,6 +127,24 @@ export default memo(function BlobList(props) {
               >
                 详情
               </a>
+              {record.valid ? (
+                <a
+                  onClick={() => {
+                    hideArticle(record.id);
+                  }}
+                >
+                  隐藏
+                </a>
+              ) : (
+                <a
+                  onClick={() => {
+                    openArticle(record.id);
+                  }}
+                >
+                  公开
+                </a>
+              )}
+
               <Popconfirm
                 title="确定删除这篇文章?"
                 onConfirm={() => {
