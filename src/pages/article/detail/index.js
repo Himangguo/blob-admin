@@ -1,9 +1,27 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
-import { Breadcrumb, Comment, Avatar } from "antd";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useState,
+  createElement,
+} from "react";
+import { Breadcrumb, Comment, Avatar, Divider, Tooltip, message } from "antd";
+import {
+  RestOutlined,
+  RestFilled,
+  ReadOutlined,
+  ReadFilled,
+} from "@ant-design/icons";
+import moment from "moment";
+import "moment/locale/zh-cn";
+
 import ArticleRender from "./article-render";
 import { DetailWrapper } from "./style";
-import { getrticleDetailById, getCommentList } from "@/api/article";
-
+import {
+  getrticleDetailById,
+  getCommentList,
+  commentValidChange,
+} from "@/api/article";
 export default memo(function ArticleDetail(props) {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
@@ -34,12 +52,60 @@ export default memo(function ArticleDetail(props) {
     },
     [getCommentList]
   );
-  const ExampleComment = ({ children, id, name, avatar, content }) => (
+  const showComment = useCallback((id) => {
+    console.log("开放", id);
+    commentValidChange(id, 1).then((res) => {
+      console.log("commentValidChange", res);
+      message.success("该评论已开放");
+      _getCommentList(props.match.params.id);
+    });
+  });
+  const hideComment = useCallback((id) => {
+    console.log("隐藏", id);
+    commentValidChange(id, 0).then((res) => {
+      console.log("commentValidChange", res);
+      message.success("该评论已隐藏");
+      _getCommentList(props.match.params.id);
+    });
+  });
+  const ExampleComment = ({
+    children,
+    id,
+    name,
+    avatar,
+    content,
+    time,
+    valid,
+  }) => (
     <Comment
-      actions={[<span key="comment-nested-reply-to">Reply to</span>]}
+      style={{ background: "#fafbfc", marginBottom: "10px" }}
       author={<a>{name}</a>}
-      avatar={<Avatar src={avatar} alt={name} />}
-      content={<p>{content}</p>}
+      avatar={<Avatar src={avatar} />}
+      actions={[
+        <Tooltip key="comment-show" title="开放">
+          <span onClick={() => showComment(id)}>
+            {createElement(valid === 1 ? ReadFilled : ReadOutlined)}
+          </span>
+        </Tooltip>,
+        <Tooltip key="comment-hide" title="隐藏">
+          <span onClick={() => hideComment(id)}>
+            {React.createElement(valid === 0 ? RestFilled : RestOutlined)}
+          </span>
+        </Tooltip>,
+        <span key="comment-is-show">
+          {valid ? (
+            <span style={{ color: "#1DA57A" }}>已开放 </span>
+          ) : (
+            <span style={{ color: "red" }}>已隐藏</span>
+          )}
+        </span>,
+      ]}
+      datetime={
+        <Tooltip title={moment(time).format("YYYY-MM-DD HH:mm:ss")}>
+          <span>{moment(time).fromNow()}</span>
+        </Tooltip>
+      }
+      content={<p className="comment-content">{content}</p>}
     >
       {children}
     </Comment>
@@ -54,7 +120,9 @@ export default memo(function ArticleDetail(props) {
               id={item.id}
               name={item.user.name}
               avatar={item.user.avatar}
+              time={item.updateTime}
               content={item.content}
+              valid={item.valid}
             >
               {renderComment(item.children)}
             </ExampleComment>
@@ -66,7 +134,9 @@ export default memo(function ArticleDetail(props) {
               id={item.id}
               name="匿名用户"
               avatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+              time={item.updateTime}
               content={item.content}
+              valid={item.valid}
             >
               {renderComment(item.children)}
             </ExampleComment>
@@ -80,7 +150,9 @@ export default memo(function ArticleDetail(props) {
               id={item.id}
               name={item.user.name}
               avatar={item.user.avatar}
+              time={item.updateTime}
               content={item.content}
+              valid={item.valid}
             />
           );
         } else {
@@ -90,7 +162,9 @@ export default memo(function ArticleDetail(props) {
               id={item.id}
               name="匿名用户"
               avatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+              time={item.updateTime}
               content={item.content}
+              valid={item.valid}
             />
           );
         }
@@ -115,6 +189,9 @@ export default memo(function ArticleDetail(props) {
       </Breadcrumb>
       <ArticleRender title={title} content={content} />
       {/* 评论 */}
+      <Divider orientation="left" plain>
+        评论区
+      </Divider>
       {renderComment(commentList)}
     </DetailWrapper>
   );

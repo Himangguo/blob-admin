@@ -82,3 +82,14 @@ export const validChange = (commentId, valid) => {
     },
   });
 };
+
+// 评论有效性修改
+export const commentValidChange = (id, valid) => {
+  return request({
+    method: "patch",
+    url: `/comment/${id}/valid`,
+    data: {
+      valid,
+    },
+  });
+};
