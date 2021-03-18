@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useEffect, useState } from "react";
-import { Input, Spin, message, Divider } from "antd";
+import { Input, Spin, message, Divider, Empty } from "antd";
 import PageHeader from "@/components/page-header";
 import SongList from "./song-list";
 import { BgMusicWrapper } from "./style";
@@ -10,9 +10,14 @@ export default memo(function BgMusic(props) {
   const [loading, setLoading] = useState(false);
   const [songList, setSongList] = useState([]);
   const [searchMusicId, setSearchMusicId] = useState(null);
+  const [haveBgMusic, setHaveBgMusic] = useState(false);
   useEffect(() => {
     getBgMusicId().then((res) => {
       console.log(res);
+      if (res.data === null) {
+        return;
+      }
+      setHaveBgMusic(true);
       setMusicId(res.musicId);
     });
   }, []);
@@ -47,15 +52,19 @@ export default memo(function BgMusic(props) {
       <Divider orientation="left" plain>
         我的背景乐
       </Divider>
-      <iframe
-        frameBorder="no"
-        border="0"
-        marginWidth="0"
-        marginHeight="0"
-        width="200"
-        height="52"
-        src={musicUrl}
-      ></iframe>
+      {haveBgMusic ? (
+        <iframe
+          frameBorder="no"
+          border="0"
+          marginWidth="0"
+          marginHeight="0"
+          width="200"
+          height="52"
+          src={musicUrl}
+        ></iframe>
+      ) : (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      )}
       <Divider orientation="left" plain>
         音乐馆/试听区
       </Divider>
@@ -82,11 +91,13 @@ export default memo(function BgMusic(props) {
         <Spin spinning={loading}>
           <SongList
             songList={songList}
+            haveBgMusic={haveBgMusic}
             setSearchMusic={(id) => {
               setSearchMusicId(id);
             }}
             setBgMusic={(id) => {
               setMusicId(id);
+              setHaveBgMusic(true);
             }}
           />
         </Spin>

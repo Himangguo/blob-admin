@@ -2,7 +2,7 @@ import React, { memo, useEffect, useMemo, useState } from "react";
 import { Empty, Button, message } from "antd";
 import { RedditOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { SongListWrapper } from "./style";
-import { setupBgMusic } from "@/api/persona";
+import { setupBgMusic, createBgMusic } from "@/api/persona";
 export default memo(function SongList(props) {
   const [listenLoadingList, setListenLoadingList] = useState([]);
   useEffect(() => {
@@ -25,13 +25,23 @@ export default memo(function SongList(props) {
     props.setSearchMusic(id);
   }
   function _setupBgMusic(id) {
-    setupBgMusic(id).then((res) => {
-      console.log("setupBgMusic", res);
-      if (res.result) {
-        message.success("背景乐修改成功");
-        props.setBgMusic(id);
-      }
-    });
+    if (props.haveBgMusic) {
+      setupBgMusic(id).then((res) => {
+        console.log("setupBgMusic", res);
+        if (res.result) {
+          message.success("背景乐修改成功");
+          props.setBgMusic(id);
+        }
+      });
+    } else {
+      createBgMusic(id).then((res) => {
+        console.log("createBgMusic", res);
+        if (res.result) {
+          message.success("背景乐设置成功");
+          props.setBgMusic(id);
+        }
+      });
+    }
   }
   return (
     <SongListWrapper>

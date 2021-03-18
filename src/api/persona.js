@@ -19,11 +19,22 @@ export const getBgMusicId = () => {
   });
 };
 
-// 设置成背景乐
+// 修改背景乐
 export const setupBgMusic = (musicId) => {
   return request({
     method: "patch",
     url: baseUrl + "/music/patch",
+    data: {
+      musicId,
+    },
+  });
+};
+
+// 创建背景乐
+export const createBgMusic = (musicId) => {
+  return request({
+    method: "post",
+    url: baseUrl + "/music/setup",
     data: {
       musicId,
     },
