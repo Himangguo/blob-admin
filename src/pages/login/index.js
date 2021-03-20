@@ -89,7 +89,7 @@ export default memo(function Login(props) {
               >
                 <Input
                   prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder="name"
+                  placeholder="请输入账号"
                   onChange={(e) => setName(e.target.value)}
                 />
               </Form.Item>
@@ -105,7 +105,7 @@ export default memo(function Login(props) {
                 <Input
                   prefix={<LockOutlined className="site-form-item-icon" />}
                   type="password"
-                  placeholder="password"
+                  placeholder="请输入密码"
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </Form.Item>
