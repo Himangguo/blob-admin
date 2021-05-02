@@ -56,16 +56,22 @@ export default memo(function ArticleDetail(props) {
     console.log("开放", id);
     commentValidChange(id, 1).then((res) => {
       console.log("commentValidChange", res);
-      message.success("该评论已开放");
-      _getCommentList(props.match.params.id);
+      if(res){
+        message.success("该评论已开放");
+        _getCommentList(props.match.params.id);
+      }
+     
     });
   });
   const hideComment = useCallback((id) => {
     console.log("隐藏", id);
     commentValidChange(id, 0).then((res) => {
       console.log("commentValidChange", res);
-      message.success("该评论已隐藏");
-      _getCommentList(props.match.params.id);
+      if(res){
+        message.success("该评论已隐藏");
+        _getCommentList(props.match.params.id);
+      }
+  
     });
   });
   const ExampleComment = ({
