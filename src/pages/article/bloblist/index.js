@@ -34,21 +34,21 @@ export default memo(function BlobList(props) {
     validChange(id, 0).then((res) => {
       console.log("validChange", res);
       message.success("已隐藏该文章");
-      _getArticleList(pagination.current,pagination.pageSize);
+      _getArticleList(pagination.current, pagination.pageSize);
     });
   }
   function openArticle(id) {
     validChange(id, 1).then((res) => {
       console.log("validChange", res);
       message.success("已公开该文章");
-      _getArticleList(pagination.current,pagination.pageSize);
+      _getArticleList(pagination.current, pagination.pageSize);
     });
   }
   function handleArticleDel(record) {
     console.log(record);
     delArticleById(record.id).then((res) => {
       console.log("delArticleById", res);
-      _getArticleList(pagination.current,pagination.pageSize);
+      _getArticleList(pagination.current, pagination.pageSize);
       message.success("删除成功");
     });
   }
@@ -144,7 +144,13 @@ export default memo(function BlobList(props) {
                   公开
                 </a>
               )}
-
+              <a
+                onClick={() => {
+                  props.history.push(`/platform/article/update/${record.id}`);
+                }}
+              >
+                修改
+              </a>
               <Popconfirm
                 title="确定删除这篇文章?"
                 onConfirm={() => {

@@ -11,7 +11,7 @@ function getBase64(file) {
     reader.onerror = (error) => reject(error);
   });
 }
-export default class PicturesWall extends React.Component {
+export default class PicturesWall extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,9 +19,17 @@ export default class PicturesWall extends React.Component {
       previewImage: "",
       previewTitle: "",
       fileList: [],
+      hasSync: false,
     };
   }
-
+  componentDidUpdate() {
+    if (this.props.fileList.length > 0 && !this.state.hasSync) {
+      this.setState({
+        fileList: this.props.fileList,
+        hasSync: true,
+      });
+    }
+  }
   handleCancel = () => this.setState({ previewVisible: false });
 
   // 方法：图片预览
@@ -38,66 +46,14 @@ export default class PicturesWall extends React.Component {
     });
   };
 
-  handleChange = ({ fileList }) => {
-    
-  };
-
   Uploader = () => {
     const props = {
-      /*  customRequest: (options) => {
-        const { onSuccess, onError, file, onProgress } = options;
-        const originFile = file;
-        console.log(options);
-        // start：进度条相关
-        // 伪装成 handleChange里面的图片上传状态
-        const imgItem = {
-          uid: "1", // 注意，这个uid一定不能少，否则上传失败
-          name: "hehe.png",
-          status: "uploading",
-          url: "",
-          percent: 99, // 注意不要写100。100表示上传完成
-        };
-
-        this.setState({
-          fileList: [imgItem],
-        }); // 更新 imgList
-        // end：进度条相关
-
-        const reader = new FileReader();
-        reader.readAsDataURL(originFile); // 读取图片文件
-
-        reader.onload = (file) => {
-          console.log(file);
-          const imgItem = {
-            uid: "1", // 注意，这个uid一定不能少，否则上传失败
-            name: "hehe.png",
-            status: "done",
-            percent: 100,
-            url: file.target.result, // url 是展示在页面上的绝对链接
-          };
-
-          this.setState({
-            fileList: [imgItem],
-          }); // 更新 imgList
-          /*     let formData = new FormData();
-          formData.append("picture", originFile);
-          // 上传图片的base64编码，调接口后，返回 imageId
-          uploadPic(formData).then((res) => {
-            formData.delete("picture");
-            console.log("uploadPic", res);
-           
-
-           
-          }); 
-        };
-      }, */
       name: "picture",
       action: uploadPicAction(),
       listType: "picture-card",
-      fileList: this.fileList,
+      fileList: this.state.fileList,
       onPreview: this.handlePreview,
       method: "POST",
-      maxCount: 2,
       headers: {
         Authorization: localStorage.getItem("token"),
       },

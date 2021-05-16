@@ -1,20 +1,25 @@
 import React, { memo, useCallback, useEffect, useState, useRef } from "react";
 import SimpleMDE from "simplemde";
 import DOMPurify from "dompurify";
-import { Input, Button, message, Tag, Tooltip } from "antd";
+import { Input, Button, message, Tag, Tooltip, Breadcrumb } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import PageHeader from "@/components/page-header";
 import PicUpload from "@/components/pic-upload";
 import "simplemde/dist/simplemde.min.css";
 // import ' /css/font-awesome.min.css';
 import { AddArticleWrapper } from "./style";
 
-import { createArticle, relaMomentToLabel } from "@/api/article";
+import {
+  createArticle,
+  relaMomentToLabel,
+  getrticleDetailById,
+} from "@/api/article";
 import { createLabel } from "@/api/label";
-
+import { updateArticle } from "@/api/article";
 export default memo(function AddArticle(props) {
+  const articleId = props.match.params.id;
   const [title, setTitle] = useState("");
   const [fileList, setFileList] = useState([]);
+  const [uploaderFileList, setUploaderFileList] = useState([]);
   // const [mdHtml, setMdHtml] = useState("");
   const [md, setMd] = useState("");
   const [chooseLabels, setChooseLabels] = useState([]);
@@ -22,47 +27,97 @@ export default memo(function AddArticle(props) {
   const [inputValue, setInputValue] = useState("");
   const [editInputIndex, setEditInputIndex] = useState(-1);
   const [editInputValue, setEditInputValue] = useState("");
+  const [simpeRender, setSimpleRender] = useState(false);
+  // const [] = useState(false);
   const inputEl = useRef(null);
   const editInputEl = useRef(null);
+  useEffect(() => {
+    if (articleId) {
+      getrticleDetailById(articleId).then((res) => {
+        console.log("getrticleDetailById", res[0]);
+        const { title, content, labels, pictures, fileNames } = res[0];
+        setTitle(title);
+        setMd(content);
+
+        Array.isArray(labels) && setChooseLabels(labels);
+        const uFileList = pictures
+          ? pictures.map((url, index) => ({
+              uid: index,
+              name: "image.png",
+              status: "done",
+              url,
+              response: {
+                data: [fileNames[index]],
+              },
+            }))
+          : [];
+        console.log("uFileList", uFileList);
+        setUploaderFileList(uFileList);
+      });
+    } else {
+      init();
+    }
+  }, []);
+  useEffect(() => {
+    if (md) {
+      init();
+    }
+  }, [md]);
   const init = useCallback(() => {
-    const simplemde = new SimpleMDE({
-      renderingConfig: {
-        markedOptions: {
-          sanitize: true,
+    if (articleId && md && !simpeRender) {
+      const simplemde = new SimpleMDE({
+        renderingConfig: {
+          markedOptions: {
+            sanitize: true,
+          },
         },
-      },
-      element: document.getElementById("md-editor"),
-      //   autoDownloadFontAwesome: false,
-      initialValue: "",
-      showIcons: ["code", "table", "horizontal-rule"],
-      insertTexts: {
-        horizontalRule: ["", "\n\n-----\n\n"],
-        image: ["![](http://", ")"],
-        link: ["[", "](http://)"],
-        table: [
-          "",
-          "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n",
-        ],
-      },
-    });
-
-    // need to use the default rendering routine
-    /*  simplemde.options.previewRender = function (plainText) {
-      return DOMPurify.sanitize(simplemde.markdown(plainText));
-    }; */
-
-    /*  if (this.value) {
-      simplemde.value(this.value);
-    } */
-    simplemde.codemirror.on("change", (newVal) => {
-      /*    if (this.hasChange) {
-        this.hasChange = true;
-      } */
-      console.log(simplemde.value());
-      // const html = simplemde.markdown(simplemde.value());
-      setMd(simplemde.value());
-    });
-  }, [SimpleMDE]);
+        element: document.getElementById("md-editor"),
+        //   autoDownloadFontAwesome: false,
+        initialValue: md,
+        showIcons: ["code", "table", "horizontal-rule"],
+        insertTexts: {
+          horizontalRule: ["", "\n\n-----\n\n"],
+          image: ["![](http://", ")"],
+          link: ["[", "](http://)"],
+          table: [
+            "",
+            "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n",
+          ],
+        },
+      });
+      simplemde.codemirror.on("change", (newVal) => {
+        console.log(simplemde.value());
+        setMd(simplemde.value());
+      });
+      setSimpleRender(true);
+    } else if (!articleId && !simpeRender) {
+      const simplemde = new SimpleMDE({
+        renderingConfig: {
+          markedOptions: {
+            sanitize: true,
+          },
+        },
+        element: document.getElementById("md-editor"),
+        //   autoDownloadFontAwesome: false,
+        initialValue: "",
+        showIcons: ["code", "table", "horizontal-rule"],
+        insertTexts: {
+          horizontalRule: ["", "\n\n-----\n\n"],
+          image: ["![](http://", ")"],
+          link: ["[", "](http://)"],
+          table: [
+            "",
+            "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n",
+          ],
+        },
+      });
+      simplemde.codemirror.on("change", (newVal) => {
+        console.log(simplemde.value());
+        setMd(simplemde.value());
+      });
+      setSimpleRender(true);
+    }
+  }, [SimpleMDE, articleId, md]);
   const handleTitleChange = useCallback((e) => {
     setTitle(e.target.value);
   });
@@ -73,11 +128,24 @@ export default memo(function AddArticle(props) {
   const handleArticleSubmit = useCallback(() => {
     console.log(title, md, fileList);
     if (title !== "" && md !== "") {
-      _createArticle(title, md,fileList);
-    }else {
+      _createArticle(title, md, fileList);
+    } else {
       message.info("文章标题和正文不能为空奥");
     }
   }, [_createArticle]);
+  const handleArticleUpdate = () => {
+    console.log(title, md, fileList, chooseLabels);
+    if (title !== "" && md !== "") {
+      updateArticle(articleId, title, md, fileList, chooseLabels).then(
+        (res) => {
+          console.log("updateArticle", res);
+          message.success(res.msg);
+        }
+      );
+    } else {
+      message.info("文章标题和正文不能为空奥");
+    }
+  };
   const handleEditInputChange = (e) => {
     setEditInputValue(e.target.value);
   };
@@ -112,8 +180,8 @@ export default memo(function AddArticle(props) {
     setInputVisible(false);
     setInputValue("");
   };
-  function _createArticle(title, content,fileList) {
-    createArticle(title, content,fileList).then((res) => {
+  function _createArticle(title, content, fileList) {
+    createArticle(title, content, fileList).then((res) => {
       console.log(res);
       if (res.data) {
         const articleId = res.data; // 文章id
@@ -131,23 +199,37 @@ export default memo(function AddArticle(props) {
       }
     });
   }
-  useEffect(() => {
-    init();
-  }, []);
   return (
     <AddArticleWrapper>
-      <PageHeader title={props.route.name} />
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              props.history.push("/platform/article/blobList");
+            }}
+          >
+            文章列表
+          </a>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>{props.route.name}</Breadcrumb.Item>
+      </Breadcrumb>
       <div className="article-title">
         <Input
           style={{ fontWeight: 700 }}
           placeholder="输入文章标题..."
           bordered={false}
           onChange={handleTitleChange}
+          value={title}
         />
       </div>
-      <textarea id="md-editor" defaultValue="" />
+      <textarea id="md-editor" />
       <div className="article-pic">
-        <PicUpload handleImgListChange={(list) => handleImgListChange(list)} />
+        <PicUpload
+          handleImgListChange={(list) => handleImgListChange(list)}
+          fileList={uploaderFileList}
+        />
       </div>
       {chooseLabels.map((tag, index) => {
         if (editInputIndex === index) {
@@ -221,9 +303,15 @@ export default memo(function AddArticle(props) {
         </Tag>
       )}
       <div className="form-btn">
-        <Button type="primary" onClick={handleArticleSubmit}>
-          发布
-        </Button>
+        {articleId ? (
+          <Button type="primary" onClick={handleArticleUpdate}>
+            修改
+          </Button>
+        ) : (
+          <Button type="primary" onClick={handleArticleSubmit}>
+            发布
+          </Button>
+        )}
       </div>
     </AddArticleWrapper>
   );

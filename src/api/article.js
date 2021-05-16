@@ -15,6 +15,19 @@ export const createArticle = (title, content, fileList) => {
   });
 };
 
+// 更新文章
+export const updateArticle = (momentId, title, content, fileList, labels) => {
+  return request({
+    method: "patch",
+    url: baseURL + `/${momentId}/update`,
+    data: {
+      title,
+      content,
+      fileList,
+      labels,
+    },
+  });
+};
 // 将文章与标签关联
 export const relaMomentToLabel = (momentId, ids) => {
   return request({
@@ -39,12 +52,13 @@ export const getArticleList = (offset, size) => {
 };
 
 // 获取评论列表
-export const getCommentList = (momentId) => {
+export const getCommentList = (momentId, type) => {
   return request({
     method: "get",
     url: "/comment",
     params: {
       momentId,
+      type,
     },
   });
 };

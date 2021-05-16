@@ -45,7 +45,7 @@ export default memo(function ArticleDetail(props) {
 
   const _getCommentList = useCallback(
     (momentId) => {
-      getCommentList(momentId).then((res) => {
+      getCommentList(momentId,1).then((res) => {
         console.log("getCommentList", res);
         setCommentList(res);
       });

@@ -112,9 +112,6 @@ export default memo(function PlatForm(props) {
             <Menu.Item key="/platform/use" icon={<DesktopOutlined />}>
               使用
             </Menu.Item>
-            <Menu.Item key="/platform/about" icon={<ContainerOutlined />}>
-              关于博客苗
-            </Menu.Item>
             <Menu.Item key="/platform/privacy" icon={<PieChartOutlined />}>
               隐私设置
             </Menu.Item>
@@ -134,7 +131,6 @@ export default memo(function PlatForm(props) {
               <Menu.Item key="/platform/personality/bgMusic">
                 背景音乐
               </Menu.Item>
-              <Menu.Item key="/platform/personality/bgWall">背景墙</Menu.Item>
             </Menu.SubMenu>
           </Menu>
         </LeftMenu>

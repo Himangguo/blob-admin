@@ -18,13 +18,11 @@ const Login = lazy(()=>import("@/pages/login"));
 const PlatForm = lazy(()=>import("@/pages/platform"));
 const Home = lazy(()=>import("@/pages/home"));
 const Use = lazy(()=>import("@/pages/use"));
-const About = lazy(()=>import("@/pages/about"));
 const Privacy = lazy(()=>import("@/pages/privacy"));
 const BlobList = lazy(()=>import("@/pages/article/bloblist"));
 const BlobDetail = lazy(()=>import("@/pages/article/detail"));
 const AddArticle = lazy(()=>import("@/pages/article/add-article"));
 const BgMusic = lazy(()=>import("@/pages/personality/bgmusic"));
-const BgWall = lazy(()=>import("@/pages/personality/bgwall"));
 const NotFound = lazy(()=>import("@/pages/not-found"));
 const routes = [
   {
@@ -66,11 +64,6 @@ const routes = [
         component: Use,
       },
       {
-        path: "/platform/about",
-        name:'关于博客苗',
-        component: About,
-      },
-      {
         path: "/platform/privacy",
         name:'隐私设置',
         component: Privacy,
@@ -97,7 +90,11 @@ const routes = [
         name:'新增文章',
         component: AddArticle,
       },
-
+      {
+        path: "/platform/article/update/:id",
+        name:'修改文章',
+        component: AddArticle,
+      },
       {
         path: "/platform/personality",
         exact: true,
@@ -109,11 +106,6 @@ const routes = [
         path: "/platform/personality/bgMusic",
         name:'背景音乐',
         component: BgMusic,
-      },
-      {
-        path: "/platform/personality/bgWall",
-        name:'背景墙',
-        component: BgWall,
       },
     ],
   },
