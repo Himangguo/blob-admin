@@ -11,7 +11,7 @@ export default memo(function Use() {
       console.log("getrticleDetailById", res);
       setUseArticle(res[0]);
     });
-  });
+  }, []);
   return (
     <div>
       <ArticleRender title={useArticle.title} content={useArticle.content} />
