@@ -7,7 +7,7 @@ export default memo(function Use() {
     content: "",
   });
   useEffect(() => {
-    getrticleDetailById(43).then((res) => {
+    getrticleDetailById(54).then((res) => {
       console.log("getrticleDetailById", res);
       setUseArticle(res[0]);
     });
